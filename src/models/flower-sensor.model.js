@@ -12,4 +12,9 @@ const FlowerSensorSchema = new mongoose.Schema({
   time: Number
 });
 
-module.exports = mongoose.model('FlowerSensors', FlowerSensorSchema);
+const package = new mongoose.Schema({
+  package_id: Number,
+  sensors: FlowerSensorSchema
+});
+
+module.exports = mongoose.model('package', package);
