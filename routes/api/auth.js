@@ -68,39 +68,6 @@ router.delete('/user', auth, (req, res) => {
   }
 });
 
-/* //@route PUT api/auth/user
-//@desc  change user data
-router.put('/user', auth, (req, res) => {
-  let { name, email, password } = req.body;
-
-  //check if email already exist
-  User.findOne({ email })
-  .then(user => {
-    if (user) {
-      res.status(400).json({ message: 'User with such email already exist' });
-    }
-
-  if(!password) {
-    User.findByIdAndUpdate(req.user.id, {$set: { name, email }}, {new: true})
-      .select('-password')
-      .then(user => res.json(user));
-  } else {
-    bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(password, salt, (err, hash) => {
-        password = hash;
-        try {
-          User.findByIdAndUpdate(req.user.id,  {$set: { name, email, password }}, {new: true})
-          .select('-password')
-          .then(user => res.json(user));
-        } catch (err) {
-          res.json({message: "Fail to update"});
-        }
-      });
-    });
-  }
-});
-}); */
-
 //@route PUT api/auth/user/email
 //@desc  change user email
 router.put('/user/email', auth, (req, res) => {
