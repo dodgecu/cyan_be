@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 
+const http = require('http').Server(app);
+
+const PORT = process.env.PORT || 4000;
+
 const bodyParser = require('body-parser');
 
 const flowerRoute = require('./routes/flower');
@@ -34,3 +38,4 @@ app.listen(PORT, () =>
     `Server running on port ${PORT}`
   )
 );
+app.listen(PORT, () => console.info(`Server running on port ${PORT}`));
