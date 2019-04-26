@@ -4,8 +4,6 @@ const cors = require('cors');
 
 const http = require('http').Server(app);
 
-const PORT = process.env.PORT || 4000;
-
 const bodyParser = require('body-parser');
 
 const flowerRoute = require('./routes/flower');
