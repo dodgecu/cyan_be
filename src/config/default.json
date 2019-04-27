@@ -1,4 +1,0 @@
-{
-  "mongoURI": " mongodb+srv://dodgecu:sn5s692@dodgecu-kuaps.mongodb.net/test?retryWrites=true",
-  "JWT": "jwt_gardenApp"
-}

@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-mongoose.connect(
-  `mongodb+srv://dodgecu:sn5s692@dodgecu-kuaps.mongodb.net/test?retryWrites=true`
-);
+// mongoose.connect(
+//   `mongodb+srv://dodgecu:sn5s692@dodgecu-kuaps.mongodb.net/test?retryWrites=true`
+// );
 
 const FlowerSensorSchema = new mongoose.Schema({
   temperature: String,
