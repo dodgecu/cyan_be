@@ -19,7 +19,7 @@ const sensorData = socket.on('connect', () => {
 
 function postData(north) {
   console.log(north);
-  if (!north === null) {
+  if (north !== null) {
     axios
       .post('http://localhost:4000/packages', north)
       .then(north => socket_io.emit('clientEvent', north.data))
