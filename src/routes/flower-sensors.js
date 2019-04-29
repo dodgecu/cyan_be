@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 // POST
-router.post('/flower-sensors', (req, res) => {
+router.post('/packages', (req, res) => {
   if (!req.body) {
     return res.status(400).send('Request body missing');
   }
@@ -32,12 +32,9 @@ router.get('/flower-sensors', (req, res) => {
 });
 
 // UPDATE
-router.put('/flower-sensors', (req, res) => {
-});
+router.put('/flower-sensors', (req, res) => {});
 
 // DELETE
-router.delete('/flower-sensors', (req, res) => {
-
-});
+router.delete('/flower-sensors', (req, res) => {});
 
 module.exports = router;

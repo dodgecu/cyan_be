@@ -5,10 +5,8 @@ const config = require('config');
 const http = require('http').Server(app);
 const cors = require('cors');
 
-
 // db
 const mongoose = require('mongoose');
-
 
 // Import routes
 const flowerRoute = require('./src/routes/flower');
@@ -28,7 +26,6 @@ mongoose
   .then(() => console.log('mongoDB connected...'))
   .catch(err => console.log(err));
 
-
 // CORS
 app.use(
   cors({
@@ -36,7 +33,6 @@ app.use(
     credentials: true
   })
 );
-
 
 // ROUTERS
 app.use(express.json());
@@ -51,6 +47,5 @@ app.use('/api/users', require('./src/routes/api/users'));
 app.use('/api/auth', require('./src/routes/api/auth'));
 
 const PORT = process.env.PORT || 4000;
-
 
 app.listen(PORT, () => console.info(`Server running on port ${PORT}`));
