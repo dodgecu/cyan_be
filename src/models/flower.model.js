@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 
-// mongoose.connect(
-//   `mongodb+srv://dodgecu:sn5s692@dodgecu-kuaps.mongodb.net/test?retryWrites=true`
-// );
-
 const FlowerSchema = new mongoose.Schema({
   airHumidity: Number,
   airTemperature: Number,
@@ -11,7 +7,7 @@ const FlowerSchema = new mongoose.Schema({
   light: Number,
   name: String,
   soilHumidity: Number,
-  sensorPackage: Number
+  package_id: String
 });
 
 module.exports = mongoose.model('Flower', FlowerSchema);
