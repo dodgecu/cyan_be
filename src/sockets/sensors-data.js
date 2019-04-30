@@ -18,30 +18,18 @@ const sensorData = socket.on('connect', () => {
 });
 
 function postData(north) {
-  console.log(north);
+  const data = {
+    north,
+    southPackage,
+    eastPackage,
+    westPackage
+  };
+  console.log(data);
+
   if (north !== null) {
-    axios
-      .post('http://localhost:4000/packages', north)
-      .then(north => socket_io.emit('clientEvent', north.data))
-      .catch(northError => socket_io.emit('clientEvent', northError))
-      .then(
-        axios
-          .post('http://localhost:4000/packages', southPackage)
-          .then(south => socket_io.emit('clientEvent', south.data))
-      )
-      .catch(southError => socket_io.emit('clientEvent', southError))
-      .then(
-        axios
-          .post('http://localhost:4000/packages', eastPackage)
-          .then(east => socket_io.emit('clientEvent', east.data))
-      )
-      .catch(eastError => socket_io.emit('clientEvent', eastError))
-      .then(
-        axios
-          .post('http://localhost:4000/packages', westPackage)
-          .then(west => socket_io.emit('clientEvent', west.data))
-      )
-      .catch(westError => socket_io.emit('clientEvent', westError));
+    axios.post('http://localhost:4000/packages', data).then(north => {
+      socket_io.emit('clientEvent', north.data);
+    });
   } else {
     socket_io.emit('clientEvent', 'error');
   }
