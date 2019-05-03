@@ -37,6 +37,20 @@ router.get('/user-flowers', (req, res) => {
     });
 });
 
+// GET
+router.get('/flower-id', (req, res) => {
+  if (!req.query.id) {
+    return res.status(400).send('Missing flower id param');
+  }
+  FlowerModel.find({ _id: req.query.id })
+    .then(doc => {
+      res.json(doc);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
+
 // UPDATE
 router.put('/flower', (req, res) => {
   if (!req.query.email) {
