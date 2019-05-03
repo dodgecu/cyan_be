@@ -42,6 +42,10 @@ router.delete('/flower-sensors', (req, res) => {});
 router.get('/flower-sensor/:id/:time', (req, res) => {
   const id = req.params.id;
   const time = req.params.time;
+
+  FlowerSensorModel.find({package_id:id, 'sensors.time': time})
+    .then((sensor) => res.json(sensor));
+
 })
 
 module.exports = router;
