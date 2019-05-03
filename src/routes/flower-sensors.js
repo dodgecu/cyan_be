@@ -37,4 +37,11 @@ router.put('/flower-sensors', (req, res) => {});
 // DELETE
 router.delete('/flower-sensors', (req, res) => {});
 
+
+//GET flower's packeges data
+router.get('/flower-sensor/:id/:time', (req, res) => {
+  const id = req.params.id;
+  const time = req.params.time;
+})
+
 module.exports = router;
