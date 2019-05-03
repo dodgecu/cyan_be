@@ -4,6 +4,8 @@ const FlowerSchema = new mongoose.Schema({
   airHumidity: Number,
   airTemperature: Number,
   type: String,
+  img_path: String,
+  user_id: String,
   light: Number,
   name: String,
   soilHumidity: Number,
