@@ -5,7 +5,7 @@ const FlowerSensorSchema = new mongoose.Schema({
   humidity: String,
   soilMoisture: Object,
   light: String,
-  time: Number
+  time: String
 });
 
 const package = new mongoose.Schema({

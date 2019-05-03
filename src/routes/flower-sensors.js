@@ -41,11 +41,14 @@ router.delete('/flower-sensors', (req, res) => {});
 //GET flower's packeges data
 router.get('/flower-sensor/:id/:time', (req, res) => {
   const id = req.params.id;
-  const time = req.params.time;
+  const startTime = req.params.time;
+  const stopTime = req.params.time - 86400000;
 
-  FlowerSensorModel.find({package_id:id, 'sensors.time': time})
-    .then((sensor) => res.json(sensor));
-
-})
+  FlowerSensorModel.find({package_id:id, 'sensors.time': {
+    $lt: startTime
+  }})
+    .then((packages) => packages.filter((el) => el.sensors.time > stopTime))
+    .then((filteredSensors) => res.json(filteredSensors));
+});
 
 module.exports = router;
