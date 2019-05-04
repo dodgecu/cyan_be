@@ -48,10 +48,9 @@ router.get('/flower-sensor/:id/:time', (req, res) => {
     $lt: startTime
   }})
     .then((packages) => packages.filter((el) => el.sensors.time > stopTime))
-    .then((filteredSensors) => res.json(filteredSensors));
+    .then((filteredSensors) => filteredSensors.map((el) => el.sensors))
+    .then((sensors) => res.json(sensors));
 
-/*     FlowerSensorModel.find({package_id:id})
-      .then((packages) => res.json(startTime)) */
 });
 
 module.exports = router;
