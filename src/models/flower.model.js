@@ -9,7 +9,8 @@ const FlowerSchema = new mongoose.Schema({
   light: Number,
   name: String,
   soilHumidity: Number,
-  package_id: String
+  package_id: String,
+  created_at: Number
 });
 
 module.exports = mongoose.model('Flower', FlowerSchema);
