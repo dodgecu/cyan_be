@@ -52,13 +52,13 @@ router.get('/flower-id', (req, res) => {
 });
 
 // UPDATE
-router.put('/flower', (req, res) => {
-  if (!req.query.email) {
-    return res.status(400).send('Missing URL param: email');
+router.put('/flower-update', (req, res) => {
+  if (!req.query.id) {
+    return res.status(400).send('Missing URL param: id');
   }
   FlowerModel.findOneAndUpdate(
     {
-      email: req.query.email
+      _id: req.query.id
     },
     req.body,
     {
@@ -70,12 +70,12 @@ router.put('/flower', (req, res) => {
 });
 
 // DELETE
-router.delete('/flower', (req, res) => {
-  if (!req.query.email) {
-    return res.status(400).send('Missing URL param: email');
+router.delete('/flower-delete', (req, res) => {
+  if (!req.query.id) {
+    return res.status(400).send('Wrong flower id');
   }
   FlowerModel.findOneAndRemove({
-    email: req.query.email
+    _id: req.query.id
   })
     .then(doc => res.json(doc))
     .catch(err => res.status(500).json(err));
