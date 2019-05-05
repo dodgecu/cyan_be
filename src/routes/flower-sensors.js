@@ -26,7 +26,9 @@ router.post('/packages', (req, res) => {
 // GET
 router.get('/flower-sensors', (req, res) => {
   FlowerSensorModel.find()
-    .sort({ _id: -1 })
+    .sort({
+      _id: -1
+    })
     .limit(1)
     .then(doc => res.json(doc))
     .catch(err => err);
@@ -41,57 +43,84 @@ router.delete('/flower-sensors', (req, res) => {});
 
 //GET flower's packeges water data
 router.get('/flower-sensor/:id/water/:time', (req, res) => {
-  const id = req.params.id;
+  const id = parseFloat(req.params.id);
   const startTime = parseFloat(req.params.time) + 86400000;
-  const stopTime = req.params.time ;
+  const stopTime = parseFloat(req.params.time);
+  const convertedTime = {
+    "$add": [new Date(0), "$time"]
+  };
 
-/*   FlowerSensorModel.find({package_id:id, 'sensors.time': {
-    $gte: stopTime,
-    $lt: startTime
-  }}). */
-  FlowerSensorModel.aggregate([
-    {$match: {
-      package_id: id,
-    }}/* ,
-    {'$group': {
-      $hour: {
-        date: new Date()
+  FlowerSensorModel.aggregate([{
+      $match: {
+        package_id: id,
+        'sensors.time': {
+          $gte: stopTime.toString(),
+          $lt: startTime.toString()
+        }
       }
-    }} */
+    }, {
+      $project: {
+        humidity: {
+          $toDouble: "$sensors.humidity"
+        },
+        time: {
+          $toDouble: "$sensors.time"
+        }
+      }
+    }, {
+      $project: {
+        _id: 0,
+        waterHumidity: '$humidity',
+        hour: {
+          $hour: convertedTime
+        }
+      }
+    }, {
+      $group: {
+        _id: '$hour',
+        avgHumidity: {
+          $avg: "$waterHumidity"
+        }
+      }
+    }, {
+      $project: {
+        _id: 0,
+        hour: '$_id',
+        humidity: '$avgHumidity'
+      }
+    }
   ])
-/*     .then((packages) => packages.filter((el) => el.sensors.time > stopTime))
-    .then((filteredSensors) => filteredSensors.map((el) => el.sensors))
-    .then((sensorsArr) => sensorsArr.map((el) => ({ time: moment(el.time, 'x').format('H'), humidity: el.humidity}))) */
     .then((sensorData) => res.json(sensorData));
 });
 
-//GET flower's packeges light data
+//GET flower's packages light data
 router.get('/flower-sensor/:id/light/:time', (req, res) => {
   const id = req.params.id;
   const startTime = parseFloat(req.params.time) + 86400000;
-  const stopTime = req.params.time ;
+  const stopTime = req.params.time;
 
-  FlowerSensorModel.find({package_id:id, 'sensors.time': {
-    $lt: startTime
-  }})
-    .then((packages) => packages.filter((el) => el.sensors.time > stopTime))
-    .then((filteredSensors) => filteredSensors.map((el) => el.sensors))
-    .then((sensorsArr) => sensorsArr.map((el) => ({ time: el.time, light: el.light})))
-    .then((sensorData) => res.json(sensorData));
+  FlowerSensorModel.find({
+    package_id: id,
+    'sensors.time': {
+      $lt: startTime
+    }
+  })
+
 });
 
-//GET flower's packeges air data
+//GET flower's packages air data
 router.get('/flower-sensor/:id/air/:time', (req, res) => {
   const id = req.params.id;
   const startTime = parseFloat(req.params.time) + 86400000;
-  const stopTime = req.params.time ;
+  const stopTime = req.params.time;
 
-  FlowerSensorModel.find({package_id:id, 'sensors.time': {
-    $lt: startTime
-  }})
-    .then((packages) => packages.filter((el) => el.sensors.time > stopTime))
-    .then((filteredSensors) => filteredSensors.map((el) => el.sensors))
-    .then((sensors) => res.json(sensors));
+  FlowerSensorModel.find({
+    package_id: id,
+    'sensors.time': {
+      $lt: startTime
+    }
+  })
+
 });
 
 module.exports = router;
