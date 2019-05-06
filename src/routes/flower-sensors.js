@@ -1,6 +1,6 @@
 const FlowerSensorModel = require('../models/flower-sensor.model');
 const express = require('express');
-const moment = require('moment');
+const round = require('mongo-round');
 
 const router = express.Router();
 
@@ -102,7 +102,7 @@ router.get('/flower-sensor/:id', (req, res) => {
       $project: {
         _id: 0,
         hour: '$_id',
-        [projectField]: '$' + [projectField]
+        [projectField]: round('$' + [projectField], 2)
       }
     }
   ])
