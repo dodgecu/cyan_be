@@ -41,12 +41,27 @@ router.put('/flower-sensors', (req, res) => {});
 router.delete('/flower-sensors', (req, res) => {});
 
 
-//GET flower's packeges water data
-router.get('/flower-sensor/:id/water/:time', (req, res) => {
+//GET flower's packeges data
+router.get('/flower-sensor/:id', (req, res) => {
   const id = parseFloat(req.params.id);
-  const time = req.params.time;
+  const time = req.query.time;
+  const type = req.query.type;
+  let selectFiled = null;
+  let projectField = null;
+
+  if(type === 'air') {
+    selectFiled = 'humidity';
+    projectField = 'humidity';
+  } else if (type === 'water') {
+    selectFiled = 'soilMoisture.Sensor data';
+    projectField = 'soilMoisture';
+  }  else if (type === 'temperature') {
+    selectFiled = 'temperature';
+    projectField = 'temperature';
+  }
+
   const stopTime = parseFloat(time) + 86400000;
-  const startTime = parseFloat(req.params.time);
+  const startTime = parseFloat(time);
   const convertedTime = {
     "$add": [new Date(0), "$time"]
   };
@@ -61,8 +76,8 @@ router.get('/flower-sensor/:id/water/:time', (req, res) => {
       }
     }, {
       $project: {
-        soilMoisture: {
-          $toDouble: "$sensors.soilMoisture.Sensor data"
+        [projectField]: {
+          $toDouble: "$sensors." + [selectFiled]
         },
         time: {
           $toDouble: "$sensors.time"
@@ -71,7 +86,7 @@ router.get('/flower-sensor/:id/water/:time', (req, res) => {
     }, {
       $project: {
         _id: 0,
-        soilMoisture: '$soilMoisture',
+        [projectField]: '$' + [projectField],
         hour: {
           $hour: convertedTime
         }
@@ -79,121 +94,15 @@ router.get('/flower-sensor/:id/water/:time', (req, res) => {
     }, {
       $group: {
         _id: '$hour',
-        avgSoilMoisture: {
-          $avg: "$soilMoisture"
+        [projectField]: {
+          $avg: '$' + [projectField]
         }
       }
     }, {
       $project: {
         _id: 0,
         hour: '$_id',
-        soilMoisture: '$avgSoilMoisture'
-      }
-    }
-  ])
-    .then((sensorData) => res.json(sensorData));
-});
-
-//GET flower's packeges water data
-router.get('/flower-sensor/:id/humidity/:time', (req, res) => {
-  const id = parseFloat(req.params.id);
-  const time = req.params.time;
-  const stopTime = parseFloat(time) + 86400000;
-  const startTime = parseFloat(req.params.time);
-  const convertedTime = {
-    "$add": [new Date(0), "$time"]
-  };
-
-  FlowerSensorModel.aggregate([{
-      $match: {
-        package_id: id,
-        'sensors.time': {
-          $gte: startTime.toString(),
-          $lt: stopTime.toString()
-        }
-      }
-    }, {
-      $project: {
-        humidity: {
-          $toDouble: "$sensors.humidity"
-        },
-        time: {
-          $toDouble: "$sensors.time"
-        }
-      }
-    }, {
-      $project: {
-        _id: 0,
-        humidity: '$humidity',
-        hour: {
-          $hour: convertedTime
-        }
-      }
-    }, {
-      $group: {
-        _id: '$hour',
-        avgHumidity: {
-          $avg: "$humidity"
-        }
-      }
-    }, {
-      $project: {
-        _id: 0,
-        hour: '$_id',
-        soilMoisture: '$avgHumidity'
-      }
-    }
-  ])
-    .then((sensorData) => res.json(sensorData));
-});
-
-//GET flower's packeges water data
-router.get('/flower-sensor/:id/temperature/:time', (req, res) => {
-  const id = parseFloat(req.params.id);
-  const time = req.params.time;
-  const stopTime = parseFloat(time) + 86400000;
-  const startTime = parseFloat(req.params.time);
-  const convertedTime = {
-    "$add": [new Date(0), "$time"]
-  };
-
-  FlowerSensorModel.aggregate([{
-      $match: {
-        package_id: id,
-        'sensors.time': {
-          $gte: startTime.toString(),
-          $lt: stopTime.toString()
-        }
-      }
-    }, {
-      $project: {
-        temperature: {
-          $toDouble: "$sensors.temperature"
-        },
-        time: {
-          $toDouble: "$sensors.time"
-        }
-      }
-    }, {
-      $project: {
-        _id: 0,
-        temperature: '$temperature',
-        hour: {
-          $hour: convertedTime
-        }
-      }
-    }, {
-      $group: {
-        _id: '$hour',
-        avgTemperature: {
-          $avg: "$temperature"
-        }
-      }
-    }, {
-      $project: {
-        _id: 0,
-        hour: '$_id',
-        temperature: '$avgTemperature'
+        [projectField]: '$' + [projectField]
       }
     }
   ])
