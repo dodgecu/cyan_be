@@ -1,5 +1,6 @@
 const FlowerSensorModel = require('../models/flower-sensor.model');
 const express = require('express');
+const moment = require('moment');
 
 const router = express.Router();
 
@@ -25,7 +26,9 @@ router.post('/packages', (req, res) => {
 // GET
 router.get('/flower-sensors', (req, res) => {
   FlowerSensorModel.find()
-    .sort({ _id: -1 })
+    .sort({
+      _id: -1
+    })
     .limit(1)
     .then(doc => res.json(doc))
     .catch(err => err);
@@ -36,5 +39,74 @@ router.put('/flower-sensors', (req, res) => {});
 
 // DELETE
 router.delete('/flower-sensors', (req, res) => {});
+
+
+//GET flower's packeges data
+router.get('/flower-sensor/:id', (req, res) => {
+  const id = parseFloat(req.params.id);
+  const time = req.query.time;
+  const type = req.query.type;
+  let selectFiled = null;
+  let projectField = null;
+
+  if(type === 'air') {
+    selectFiled = 'humidity';
+    projectField = 'humidity';
+  } else if (type === 'water') {
+    selectFiled = 'soilMoisture.Sensor data';
+    projectField = 'soilMoisture';
+  }  else if (type === 'temperature') {
+    selectFiled = 'temperature';
+    projectField = 'temperature';
+  }
+
+  const stopTime = parseFloat(time) + 86400000;
+  const startTime = parseFloat(time);
+  const convertedTime = {
+    "$add": [new Date(0), "$time"]
+  };
+
+  FlowerSensorModel.aggregate([{
+      $match: {
+        package_id: id,
+        'sensors.time': {
+          $gte: startTime.toString(),
+          $lt: stopTime.toString()
+        }
+      }
+    }, {
+      $project: {
+        [projectField]: {
+          $toDouble: "$sensors." + [selectFiled]
+        },
+        time: {
+          $toDouble: "$sensors.time"
+        }
+      }
+    }, {
+      $project: {
+        _id: 0,
+        [projectField]: '$' + [projectField],
+        hour: {
+          $hour: convertedTime
+        }
+      }
+    }, {
+      $group: {
+        _id: '$hour',
+        [projectField]: {
+          $avg: '$' + [projectField]
+        }
+      }
+    }, {
+      $project: {
+        _id: 0,
+        hour: '$_id',
+        [projectField]: '$' + [projectField]
+      }
+    }
+  ])
+    .then((sensorData) => res.json(sensorData));
+});
 
 module.exports = router;
