@@ -2,6 +2,10 @@ const io = require('socket.io-client');
 const axios = require('axios');
 const socket_io = require('socket.io').listen(1335);
 
+const south = require('./dummy-sensors/south');
+const east = require('./dummy-sensors/east');
+const west = require('./dummy-sensors/west');
+
 const socket = io.connect('http://cyan:8080/', {
   reconnection: false
 });
@@ -13,44 +17,8 @@ const sensorData = socket.on('connect', () => {
   });
 });
 
-const south = {
-  package_id: 2,
-  name: 'South package',
-  sensors: {
-    temperature: 67,
-    humidity: 43,
-    soilMoisture: { 'Sensor data': '69' },
-    light: '76',
-    time: new Date().getTime()
-  }
-};
-
-const west = {
-  package_id: 3,
-  name: 'West package',
-  sensors: {
-    temperature: 57,
-    humidity: 33,
-    soilMoisture: { 'Sensor data': '39' },
-    light: '56',
-    time: new Date().getTime()
-  }
-};
-
-const east = {
-  package_id: 4,
-  name: 'East package',
-  sensors: {
-    temperature: 47,
-    humidity: 53,
-    soilMoisture: { 'Sensor data': '49' },
-    light: '76',
-    time: new Date().getTime()
-  }
-};
-
 function postData(data) {
-  if (data !== null) {
+  if (data.sensors) {
     axios
       .post('http://localhost:4000/packages', data)
       .then(north => {
@@ -60,7 +28,7 @@ function postData(data) {
       .then(data => socket_io.emit('westPackage', west))
       .then(data => socket_io.emit('eastPackage', east));
   } else {
-    socket_io.emit('clientEvent', 'error');
+    socket_io.emit('clientEvent', data);
   }
 }
 
