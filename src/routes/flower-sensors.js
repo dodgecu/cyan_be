@@ -102,7 +102,11 @@ router.get('/flower-sensor/:id', (req, res) => {
       $project: {
         _id: 0,
         hour: '$_id',
-        [projectField]: round('$' + [projectField], 2)
+        value: round({$divide: ['$' + [projectField], 100]}, 2)
+      }
+    } , {
+      $sort: {
+        hour: 1
       }
     }
   ])
