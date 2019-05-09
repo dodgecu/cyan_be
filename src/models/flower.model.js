@@ -9,6 +9,7 @@ const FlowerSchema = new mongoose.Schema({
   light: Number,
   name: String,
   soilHumidity: Number,
+  delta: Number,
   package_id: String,
   created_at: Number
 });
