@@ -81,7 +81,7 @@ router.put('/user/email', auth, (req, res) => {
     try {
       User.findByIdAndUpdate(req.user.id, {$set: { email }}, {new: true})
       .select('-password')
-      .then(user => res.json(user));
+      .then(user => res.json(Object.assign({}, {id: user.id, name:user.name, email: user.email, flowers: user.flowers, date: user.date})));
     } catch (err) {
       res.json({message: "Cannot change email"});
     }
@@ -97,7 +97,7 @@ router.put('/user/name', auth, (req, res) => {
   try {
     User.findByIdAndUpdate(req.user.id, {$set: { name }}, {new: true})
     .select('-password')
-    .then(user => res.json(user));
+    .then(user => res.json(Object.assign({}, {id: user.id, name:user.name, email: user.email, flowers: user.flowers, date: user.date})));
   } catch (err) {
     res.json({message: "Cannot change name"});
   }
@@ -115,7 +115,7 @@ router.put('/user/password', auth, (req, res) => {
       try {
         User.findByIdAndUpdate(req.user.id,  {$set: { password }}, {new: true})
         .select('-password')
-        .then(user => res.json(user));
+        .then(user => res.json(Object.assign({}, {id: user.id, name:user.name, email: user.email, flowers: user.flowers, date: user.date})));
       } catch (err) {
         res.json({message: "Cannot change password"});
       }
