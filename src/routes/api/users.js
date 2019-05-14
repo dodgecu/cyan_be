@@ -59,6 +59,21 @@ router.post('/', (req, res) => {
   });
 });
 
+//@route POST api/users
+//@route for async validation
+router.post('/email-validation', (req, res) => {
+  const { email } = req.body;
+  User.findOne({ email })
+    .then(user => {
+      if (!user) {
+        res.status(200).json({ message: 'validation pass' });
+      } else {
+        res.status(400).json({message: 'Email is taken'})
+      }
+    }
+  )
+});
+
 //@route PUPT (update flower select) api/users
 router.put('/', (req, res) => {
   const flowerId = { flowerId: req.body.flowerRecord };

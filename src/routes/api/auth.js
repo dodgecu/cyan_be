@@ -25,7 +25,7 @@ router.post('/', (req, res) => {
       //Password validation
       bcrypt.compare(password, user.password)
         .then(isMatch => {
-          if(!isMatch) return res.status(400).json({message: 'Wrong password'})
+          if(!isMatch) return res.status(400).json({message: 'Wrong password or email'})
 
           jwt.sign(
             { id: user.id },
@@ -39,7 +39,8 @@ router.post('/', (req, res) => {
                 user: {
                   id: user.id,
                   name: user.name,
-                  email: user.email
+                  email: user.email,
+                  flowers: user.flowers
                 }
               });
 
