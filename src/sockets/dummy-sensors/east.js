@@ -2,10 +2,10 @@ const east = {
   package_id: 4,
   name: 'East package',
   sensors: {
-    temperature: 47,
-    humidity: 53,
-    soilMoisture: { 'Sensor data': '49' },
-    light: '76',
+    temperature: Math.floor(Math.random() * 100),
+    humidity: Math.floor(Math.random() * 100),
+    soilMoisture: { 'Sensor data': Math.floor(Math.random() * 100).toString() },
+    light: Math.floor(Math.random() * 100).toString(),
     time: new Date().getTime()
   }
 };

@@ -11,9 +11,6 @@ const FlowerSensorSchema = new mongoose.Schema({
 const package = new mongoose.Schema({
   package_id: Number,
   name: String,
-  sensors: FlowerSensorSchema,
-  package_id: Number,
-  name: String,
   sensors: FlowerSensorSchema
 });
 

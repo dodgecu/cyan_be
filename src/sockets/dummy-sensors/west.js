@@ -2,10 +2,10 @@ const west = {
   package_id: 3,
   name: 'West package',
   sensors: {
-    temperature: 57,
-    humidity: 33,
-    soilMoisture: { 'Sensor data': '39' },
-    light: '56',
+    temperature: Math.floor(Math.random() * 100),
+    humidity: Math.floor(Math.random() * 100),
+    soilMoisture: { 'Sensor data': Math.floor(Math.random() * 100).toString() },
+    light: Math.floor(Math.random() * 100).toString(),
     time: new Date().getTime()
   }
 };
