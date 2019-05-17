@@ -1,14 +1,16 @@
 const FlowerSensorModel = require('../models/flower-sensor.model');
 const express = require('express');
 const round = require('mongo-round');
-
+const socketController = require('../sockets/send-client-data');
 const router = express.Router();
 
 // POST
 router.post('/packages', (req, res) => {
-  if (!req.body) {
-    return res.status(400).send('Request body missing');
+  socketController(req.body);
+  if (!req.body || req.body.sensorErr) {
+    return res.status(400).send(`Body missing, or sensor error: ${req.body}`);
   }
+
   const model = new FlowerSensorModel(req.body);
   model
     .save()
@@ -16,6 +18,7 @@ router.post('/packages', (req, res) => {
       if (!doc || doc.length === 0) {
         return res.status(500);
       }
+
       res.status(201).send(doc);
     })
     .catch(err => {
@@ -40,7 +43,6 @@ router.put('/flower-sensors', (req, res) => {});
 // DELETE
 router.delete('/flower-sensors', (req, res) => {});
 
-
 //GET flower's packeges data
 router.get('/flower-sensor/:id', (req, res) => {
   const id = parseFloat(req.params.id);
@@ -49,13 +51,13 @@ router.get('/flower-sensor/:id', (req, res) => {
   let selectFiled = null;
   let projectField = null;
 
-  if(type === 'air') {
+  if (type === 'air') {
     selectFiled = 'humidity';
     projectField = 'humidity';
   } else if (type === 'water') {
     selectFiled = 'soilMoisture.Sensor data';
     projectField = 'soilMoisture';
-  }  else if (type === 'temperature') {
+  } else if (type === 'temperature') {
     selectFiled = 'temperature';
     projectField = 'temperature';
   }
@@ -63,10 +65,11 @@ router.get('/flower-sensor/:id', (req, res) => {
   const stopTime = parseFloat(time) + 86400000;
   const startTime = parseFloat(time);
   const convertedTime = {
-    "$add": [new Date(0), "$time"]
+    $add: [new Date(0), '$time']
   };
 
-  FlowerSensorModel.aggregate([{
+  FlowerSensorModel.aggregate([
+    {
       $match: {
         package_id: id,
         'sensors.time': {
@@ -74,16 +77,18 @@ router.get('/flower-sensor/:id', (req, res) => {
           $lt: stopTime.toString()
         }
       }
-    }, {
+    },
+    {
       $project: {
         [projectField]: {
-          $toDouble: "$sensors." + [selectFiled]
+          $toDouble: '$sensors.' + [selectFiled]
         },
         time: {
-          $toDouble: "$sensors.time"
+          $toDouble: '$sensors.time'
         }
       }
-    }, {
+    },
+    {
       $project: {
         _id: 0,
         [projectField]: '$' + [projectField],
@@ -91,26 +96,28 @@ router.get('/flower-sensor/:id', (req, res) => {
           $hour: convertedTime
         }
       }
-    }, {
+    },
+    {
       $group: {
         _id: '$hour',
         [projectField]: {
           $avg: '$' + [projectField]
         }
       }
-    }, {
+    },
+    {
       $project: {
         _id: 0,
         hour: '$_id',
-        value: round({$divide: ['$' + [projectField], 100]}, 2)
+        value: round({ $divide: ['$' + [projectField], 100] }, 2)
       }
-    } , {
+    },
+    {
       $sort: {
         hour: 1
       }
     }
-  ])
-    .then((sensorData) => res.json(sensorData));
+  ]).then(sensorData => res.json(sensorData));
 });
 
 module.exports = router;

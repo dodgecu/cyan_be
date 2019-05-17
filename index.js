@@ -12,8 +12,6 @@ const mongoose = require('mongoose');
 const flowerRoute = require('./src/routes/flower');
 const flowerSensors = require('./src/routes/flower-sensors');
 
-const sensors = require('./src/sockets/sensors-data');
-
 // DB config
 const db = config.get('mongoURI');
 
@@ -27,12 +25,9 @@ mongoose
   .catch(err => console.log(err));
 
 // CORS
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true
-  })
-);
+// CORS
+app.use(cors());
+app.options('*', cors());
 
 // ROUTERS
 app.use(express.json());
